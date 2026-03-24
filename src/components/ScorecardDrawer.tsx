@@ -30,11 +30,26 @@ for (let h = 0; h < 24; h++) {
   }
 }
 
-const templates = [
-  'CommercialCopilotEngagementBizchat',
-  'BingCoreSearchScorecard',
-  'CopilotUsageScorecard',
-  'DefaultExperimentTemplate',
+const assignmentUnits = [
+  'User Id',
+  'Tenant Id',
+  'Device Id',
+]
+
+const scorecardOptions = [
+  'Bizchat Core Scorecard',
+  'Bizchat Indicator Scorecard',
+  'Commercial Copilot Acquisition',
+  'Commercial Copilot Acquisition for Leading Business Indicator (LBI)',
+  'Commercial Copilot Agent',
+  'Commercial Copilot App',
+  'Commercial Copilot App - Mobile',
+  'Commercial Copilot Engagement',
+  'Commercial Copilot Engagement - All Mobile Apps',
+  'Windows Guardrails – Commercial',
+  'Windows Guardrails – Commercial [Use for holdout]',
+  'Windows Guardrails – Consumer',
+  'Windows Guardrails – Consumer [Use for holdout]',
 ]
 
 const useStyles = makeStyles({
@@ -62,14 +77,11 @@ const useStyles = makeStyles({
   radioGroup: {
     gap: '4px',
   },
-  templateRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
+  assignmentDropdown: {
+    width: '100%',
   },
-  templateDropdown: {
-    flexGrow: '1',
-    minWidth: '0',
+  scorecardDropdown: {
+    width: '100%',
   },
   metricSection: {
     display: 'flex',
@@ -107,9 +119,7 @@ const useStyles = makeStyles({
   timePicker: {
     minWidth: '110px',
   },
-  requiredStar: {
-    color: tokens.colorPaletteRedForeground1,
-  },
+
   footer: {
     padding: '16px 24px 24px',
     borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
@@ -127,8 +137,9 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
 
   const [name, setName] = useState('')
   const [nameError, setNameError] = useState(false)
-  const [templateValue, setTemplateValue] = useState('CommercialCopilotEngagementBizchat')
-  const [templateSelected, setTemplateSelected] = useState(['CommercialCopilotEngagementBizchat'])
+  const [assignmentUnitValue, setAssignmentUnitValue] = useState('')
+  const [assignmentUnitSelected, setAssignmentUnitSelected] = useState<string[]>([])
+  const [selectedScorecards, setSelectedScorecards] = useState<string[]>([])
   const [scheduleType, setScheduleType] = useState('custom')
   const [startDate, setStartDate] = useState<Date | null | undefined>(new Date(2025, 11, 4))
   const [startTimeValue, setStartTimeValue] = useState('10:30 PM')
@@ -186,7 +197,6 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
         <div className={styles.section}>
           <Field
             label="Name"
-            required
             validationState={nameError ? 'error' : 'none'}
             validationMessage={nameError ? 'Required' : undefined}
           >
@@ -201,33 +211,44 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
           </Field>
         </div>
 
-        {/* ── Analysis Template ── */}
+        {/* ── Assignment Unit ── */}
         <div className={styles.section}>
           <Field
-            label={
-              <span>
-                Select a template <span className={styles.requiredStar}>*</span>{' '}
-                <Info16Regular className={styles.infoIcon} />
-              </span>
-            }
+            label="Assignment Unit"
           >
-            <div className={styles.templateRow}>
-              <Dropdown
-                value={templateValue}
-                selectedOptions={templateSelected}
-                onOptionSelect={(_, d) => {
-                  setTemplateValue(d.optionText ?? '')
-                  setTemplateSelected([d.optionValue ?? ''])
-                }}
-                className={styles.templateDropdown}
-              >
-                {templates.map(t => (
-                  <Option key={t} value={t}>{t}</Option>
-                ))}
-              </Dropdown>
-            </div>
+            <Dropdown
+              value={assignmentUnitValue}
+              selectedOptions={assignmentUnitSelected}
+              onOptionSelect={(_, d) => {
+                setAssignmentUnitValue(d.optionText ?? '')
+                setAssignmentUnitSelected([d.optionValue ?? ''])
+              }}
+              className={styles.assignmentDropdown}
+            >
+              {assignmentUnits.map(u => (
+                <Option key={u} value={u}>{u}</Option>
+              ))}
+            </Dropdown>
           </Field>
+        </div>
 
+        {/* ── Scorecard ── */}
+        <div className={styles.section}>
+          <Field label="Scorecard">
+            <Dropdown
+              multiselect
+              value={selectedScorecards.join(', ')}
+              selectedOptions={selectedScorecards}
+              onOptionSelect={(_, d) => {
+                setSelectedScorecards(d.selectedOptions)
+              }}
+              className={styles.scorecardDropdown}
+            >
+              {scorecardOptions.map(s => (
+                <Option key={s} value={s}>{s}</Option>
+              ))}
+            </Dropdown>
+          </Field>
         </div>
 
         {/* ── Analysis Dates ── */}
