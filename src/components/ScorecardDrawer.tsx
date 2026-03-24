@@ -16,7 +16,6 @@ import {
 } from '@fluentui/react-components'
 import {
   Dismiss24Regular,
-  ArrowUpRight16Regular,
   Info16Regular,
 } from '@fluentui/react-icons'
 import { DatePicker } from '@fluentui/react-datepicker-compat'
