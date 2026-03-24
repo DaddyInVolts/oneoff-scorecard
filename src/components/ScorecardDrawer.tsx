@@ -135,11 +135,9 @@ interface Props {
 export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
   const styles = useStyles()
 
-  const [name, setName] = useState('')
-  const [nameError, setNameError] = useState(false)
   const [assignmentUnitValue, setAssignmentUnitValue] = useState('')
   const [assignmentUnitSelected, setAssignmentUnitSelected] = useState<string[]>([])
-  const [selectedScorecards, setSelectedScorecards] = useState<string[]>([])
+  const [selectedScorecard, setSelectedScorecard] = useState('')
   const [scheduleType, setScheduleType] = useState('custom')
   const [startDate, setStartDate] = useState<Date | null | undefined>(new Date(2025, 11, 4))
   const [startTimeValue, setStartTimeValue] = useState('10:30 PM')
@@ -153,6 +151,32 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
     return date.toDateString() // e.g. "Thu Dec 04 2025"
   }
 
+  const formatShortDate = (date?: Date | null) => {
+    if (!date) return ''
+    const mm = String(date.getMonth() + 1).padStart(2, '0')
+    const dd = String(date.getDate()).padStart(2, '0')
+    const yyyy = date.getFullYear()
+    return `${mm}/${dd}/${yyyy}`
+  }
+
+  const formatShortDateTime = (date: Date) => {
+    const mm = String(date.getMonth() + 1).padStart(2, '0')
+    const dd = String(date.getDate()).padStart(2, '0')
+    const yyyy = date.getFullYear()
+    const hours = date.getHours()
+    const hour12 = hours % 12 || 12
+    const ampm = hours < 12 ? 'AM' : 'PM'
+    const min = String(date.getMinutes()).padStart(2, '0')
+    const ss = String(date.getSeconds()).padStart(2, '0')
+    return `${mm}/${dd}/${yyyy} ${hour12}-${min}-${ss} ${ampm}`
+  }
+
+  const computedName = [
+    'dalyds',
+    selectedScorecard ? `-${selectedScorecard}` : '',
+    ` ${formatShortDateTime(new Date())}`,
+  ].join('')
+
   const getPeriod = () => {
     if (!startDate || !endDate) return 'Custom'
     const days = Math.round(Math.abs(endDate.getTime() - startDate.getTime()) / 86400000)
@@ -160,13 +184,7 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
   }
 
   const handleValidate = () => {
-    if (!name.trim()) {
-      setNameError(true)
-      return
-    }
-    onSubmit(name.trim(), getPeriod())
-    setName('')
-    setNameError(false)
+    onSubmit(computedName.trim(), getPeriod())
   }
 
   return (
@@ -193,24 +211,6 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
 
       <DrawerBody className={styles.drawerBody}>
         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {/* ── Analysis Details ── */}
-        <div className={styles.section}>
-          <Field
-            label="Name"
-            validationState={nameError ? 'error' : 'none'}
-            validationMessage={nameError ? 'Required' : undefined}
-          >
-            <Input
-              placeholder="Provide a descriptive Analysis study name (e.g. MyTestScorecard for June)"
-              value={name}
-              onChange={(_, d) => {
-                setName(d.value)
-                if (d.value) setNameError(false)
-              }}
-            />
-          </Field>
-        </div>
-
         {/* ── Assignment Unit ── */}
         <div className={styles.section}>
           <Field
@@ -236,13 +236,11 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
         <div className={styles.section}>
           <Field label="Scorecard">
             <Dropdown
-              multiselect
-              value={selectedScorecards.join(', ')}
-              selectedOptions={selectedScorecards}
+              value={selectedScorecard}
+              selectedOptions={selectedScorecard ? [selectedScorecard] : []}
               onOptionSelect={(_, d) => {
-                setSelectedScorecards(d.selectedOptions)
-              }}
-              className={styles.scorecardDropdown}
+                setSelectedScorecard(d.optionValue ?? '')
+              }}              className={styles.scorecardDropdown}
             >
               {scorecardOptions.map(s => (
                 <Option key={s} value={s}>{s}</Option>
@@ -320,6 +318,18 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
               </p>
             </>
           )}
+        </div>
+
+        {/* ── Analysis Details ── */}
+        <div className={styles.section}>
+          <Field
+            label="Name"
+          >
+            <Input
+              value={computedName}
+              readOnly
+            />
+          </Field>
         </div>
 
         </div>{/* end sections wrapper */}
