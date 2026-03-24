@@ -5,10 +5,7 @@ import {
   DrawerHeaderTitle,
   DrawerBody,
   Button,
-  Input,
   Field,
-  RadioGroup,
-  Radio,
   Dropdown,
   Option,
   makeStyles,
@@ -138,7 +135,6 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
   const [assignmentUnitValue, setAssignmentUnitValue] = useState('')
   const [assignmentUnitSelected, setAssignmentUnitSelected] = useState<string[]>([])
   const [selectedScorecard, setSelectedScorecard] = useState('')
-  const [scheduleType, setScheduleType] = useState('custom')
   const [startDate, setStartDate] = useState<Date | null | undefined>(new Date(2025, 11, 4))
   const [startTimeValue, setStartTimeValue] = useState('10:30 PM')
   const [startTimeSelected, setStartTimeSelected] = useState(['10:30 PM'])
@@ -243,17 +239,6 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
 
         {/* ── Analysis Dates ── */}
         <div className={styles.section}>
-          <RadioGroup
-            value={scheduleType}
-            onChange={(_, d) => setScheduleType(d.value)}
-            className={styles.radioGroup}
-          >
-            <Radio value="automatic" label="Automatic Schedule" />
-            <Radio value="custom" label="Custom Schedule (One off)" />
-          </RadioGroup>
-
-          {scheduleType === 'custom' && (
-            <>
               <div className={styles.dateRangeLabel}>
                 Select a time range for one-off analysis (timezone: GMT-0000 (UTC)).{' '}
                 <Info16Regular className={styles.infoIcon} />
@@ -308,20 +293,12 @@ export function ScorecardDrawer({ open, onClose, onSubmit }: Props) {
                   This will create one scorecard using the data within the time window provided
                 </strong>
               </p>
-            </>
-          )}
         </div>
 
         {/* ── Analysis Details ── */}
         <div className={styles.section}>
-          <Field
-            label="Name"
-          >
-            <Input
-              value={computedName}
-              readOnly
-            />
-          </Field>
+          <div className={styles.metricLabel}>Name</div>
+          <div>{computedName}</div>
         </div>
 
         </div>{/* end sections wrapper */}
