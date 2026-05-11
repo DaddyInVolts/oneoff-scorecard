@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Spec — One-off Scorecard</title>
+<style>
+  :root {
+    --primary: #1a73e8;
+    --primary-light: #e8f0fe;
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --text: #202124;
+    --text-secondary: #5f6368;
+    --border: #dadce0;
+    --risk-red: #d93025;
+    --risk-bg: #fce8e6;
+    --success-green: #1e8e3e;
+    --success-bg: #e6f4ea;
+    --warn-amber: #e37400;
+    --warn-bg: #fef7e0;
+    --p0: #d93025;
+    --p1: #e37400;
+    --p2: #1a73e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1a2332 0%, #2d4a6f 60%, var(--primary) 100%);
+    color: #fff;
+    padding: 48px 40px 36px;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .header .subtitle {
+    font-size: 1rem;
+    opacity: 0.85;
+    font-weight: 400;
+  }
+  .meta-bar {
+    display: flex;
+    gap: 32px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+  .meta-item strong {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.65;
+    margin-bottom: 2px;
+  }
+
+  /* ── Content ── */
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 40px 60px;
+  }
+
+  /* ── Section ── */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+  }
+  .section-number {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .section h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .section h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: var(--text);
+  }
+  .section p, .section li {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+  .section ul, .section ol {
+    padding-left: 22px;
+  }
+
+  /* ── Placeholder / fill-in text ── */
+  .placeholder {
+    background: var(--primary-light);
+    border-left: 3px solid var(--primary);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+    color: var(--primary);
+    font-size: 0.9rem;
+    margin: 12px 0;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.9rem;
+  }
+  thead th {
+    background: var(--bg);
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border);
+  }
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* ── Priority badges ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-p0 { background: #fce8e6; color: var(--p0); }
+  .badge-p1 { background: var(--warn-bg); color: var(--p1); }
+  .badge-p2 { background: var(--primary-light); color: var(--p2); }
+
+  /* ── Metric cards ── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .metric-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .metric-card .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .metric-card .value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .metric-card .target {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ── Scenario cards ── */
+  .scenario-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 14px 0;
+  }
+  .scenario-card .persona {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .scenario-card .narrative {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  /* ── Risk / Open Q cards ── */
+  .risk-card {
+    border-left: 4px solid var(--risk-red);
+    background: var(--risk-bg);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 10px 0;
+  }
+  .risk-card .risk-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--risk-red);
+    margin-bottom: 4px;
+  }
+  .risk-card p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+
+  .question-card {
+    border-left: 4px solid var(--warn-amber);
+    background: var(--warn-bg);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 10px 0;
+  }
+  .question-card .q-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--warn-amber);
+    margin-bottom: 4px;
+  }
+  .question-card p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+
+  /* ── UX Flow box ── */
+  .ux-flow {
+    background: var(--bg);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 14px 0;
+  }
+
+  /* ── Nongoal chip ── */
+  .nongoal {
+    background: #f1f3f4;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 6px 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nongoal::before {
+    content: '✕';
+    color: var(--risk-red);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; }
+    .content { padding: 0 20px; }
+    .section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- HEADER                                                      -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="header">
+  <h1>One-off Scorecard</h1>
+  <div class="subtitle">Product Specification · Self-service custom-window scorecard requests for Expedite</div>
+  <div class="meta-bar">
+    <div class="meta-item"><strong>PM Owner</strong> David Lydston</div>
+    <div class="meta-item"><strong>Team</strong> IDEAS Experimentation</div>
+    <div class="meta-item"><strong>Last Updated</strong> May 2026</div>
+    <div class="meta-item"><strong>Status</strong> Draft</div>
+    <div class="meta-item"><strong>Stakeholders</strong> M365 Copilot Experiment Owners · Expedite Engineering · Data Science · Compute Platform</div>
+  </div>
+</div>
+
+<!-- Prototype CTA -->
+<div style="max-width: 1100px; margin: 24px auto 0; padding: 0 32px;">
+  <a href="./prototype/" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; text-decoration: none; background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); color: #fff; padding: 16px 24px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 120, 212, 0.25); transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 14px rgba(0, 120, 212, 0.35)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(0, 120, 212, 0.25)';">
+    <div>
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.85; font-weight: 600;">🧪 Clickable Prototype</div>
+      <div style="font-size: 18px; font-weight: 600; margin-top: 4px;">View the live prototype with fake data →</div>
+      <div style="font-size: 13px; opacity: 0.92; margin-top: 4px;">Rollout panel · Request drawer · Assignment Unit · Scorecard catalog · UTC window picker · live status table</div>
+    </div>
+    <div style="font-size: 28px; font-weight: 700;">→</div>
+  </a>
+</div>
+
+<div class="content">
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 1 — Problem & Opportunity           -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 1</div>
+  <h2>Problem &amp; Opportunity</h2>
+
+  <h3>Problem Statement</h3>
+  <p>Expedite runs experiment scorecards on a fixed cadence tied to the rollout's calendar. When an experiment owner needs to look at scorecard metrics over a window that doesn't match the cadence — the three days around an outage, the last seven days of a tenant canary, a "what did this look like before the hotfix" comparison — they have no self-service path. The work falls back to filing a DS partner ticket, hand-rolling SQL, or asking the platform team to kick off a one-off run. The result is that custom-window analysis happens too late to influence the ship decision, gets done inconsistently across owners, and quietly burns DS partner cycles on operational work.</p>
+
+  <h3>Opportunity</h3>
+  <p>A "Request One-off Scorecard" action, surfaced directly inside the rollout view, lets an experiment owner pick an existing scorecard, an assignment unit, and an arbitrary UTC time window — and queue that scorecard against the same data and definitions the platform already runs on cadence. The request joins the rollout's existing scorecard table as a "Requested" row and, on completion, becomes a clickable scorecard alongside the cadence ones. Custom-window questions get answered in hours instead of days; the DS partner gets pulled in for judgment instead of operations; and every one-off becomes a first-class artifact attached to the rollout rather than a one-time email thread.</p>
+
+  <h3>Evidence</h3>
+  <div class="placeholder">Quantitative evidence pending. Recommended additions before review: (1) volume of ad-hoc one-off scorecard requests routed to DS partners per quarter; (2) median time from request to delivered scorecard today; (3) rate of ship decisions that wait on, or skip, a needed custom-window scorecard.</div>
+  <ul>
+    <li><strong>Anecdotal — DS partners:</strong> recurring ask-by-email pattern for "run scorecard X over window Y" with no shared queue or self-service surface.</li>
+    <li><strong>Anecdotal — Experiment owners:</strong> cadence scorecard windows often miss launch, hotfix, or incident windows where the decision-relevant signal actually lives.</li>
+    <li><strong>Adjacent signal:</strong> the rollout-level scorecard table already renders Completed scorecards consistently — the data path and UI surface for a "Requested → Completed" extension are in place.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 2 — Goals & Success Metrics          -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 2</div>
+  <h2>Goals &amp; Success Metrics</h2>
+
+  <h3>Goals</h3>
+  <ol>
+    <li>Give experiment owners a self-service path to request a scorecard over any UTC window without filing a ticket or writing SQL.</li>
+    <li>Make the request a first-class artifact on the rollout — visible, attributable, and reusable — by surfacing it as a "Requested" row in the rollout's scorecard table alongside cadence scorecards.</li>
+    <li>Reuse the existing scorecard catalog and compute pipeline — no new scorecard definitions, no parallel data path — so cadence and one-off results are directly comparable.</li>
+  </ol>
+
+  <h3>Success Metrics</h3>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="label">Primary Metric</div>
+      <div class="value">Self-service one-off scorecards per quarter</div>
+      <div class="target">Target: 50+ per quarter by Q+2 · Baseline: ~0 (no self-service path today)</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Secondary Metric</div>
+      <div class="value">DS-routed scorecard requests per quarter</div>
+      <div class="target">Target: 50% reduction vs. pre-launch baseline — the one-off feature absorbs the ad-hoc volume</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Guardrail Metric</div>
+      <div class="value">Median time from Requested → Completed</div>
+      <div class="target">Must not exceed TBD (target ≤ 4 hours); regression indicates the compute pipeline is saturated by self-service load</div>
+    </div>
+  </div>
+
+  <h3>Explicit Non-Goals</h3>
+  <div class="nongoal">Authoring new scorecard definitions — the request flow only selects from the curated catalog</div>
+  <div class="nongoal">Real-time or streaming scorecards — one-off runs are batch over a closed window</div>
+  <div class="nongoal">Cross-experiment or cross-rollout aggregation — each request targets a single rollout</div>
+  <div class="nongoal">Custom metric or filter authoring inside the drawer — out of scope for v1</div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 3 — User Scenarios                   -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 3</div>
+  <h2>User Scenarios</h2>
+
+  <div class="scenario-card">
+    <div class="persona">Scenario 1 — Experiment owner running a launch retrospective (Primary)</div>
+    <div class="narrative">
+      <p>Priya is the owner of a Bizchat feature that ran a 30-day A/B. On days 12–14 a regional outage skewed user behavior. The default cadence scorecard window includes those days, contaminating her retention metrics. Priya opens the rollout in Expedite, expands the Roll-out type panel, clicks <em>Request One-off Scorecard</em>, picks "Bizchat Indicator Scorecard" by User Id, sets the window to day 15 → day 30 in UTC, and clicks Validate. A "Requested" row appears in her scorecard table. Hours later it flips to "Completed" and links to the same scorecard surface she already knows — clean numbers, no DS ticket.</p>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="persona">Scenario 2 — DS partner triaging a guardrail regression</div>
+    <div class="narrative">
+      <p>Raj is a DS partner. The weekly Windows Guardrails — Commercial scorecard flagged a regression and he wants to confirm by tightening the window to the suspected three-day incident. He opens the rollout, picks "Windows Guardrails — Commercial" by Device Id, sets a 3-day window, validates, and gets a clean comparison run without writing SQL or touching the cadence config. The Requested row carries his alias and timestamp, so the team has a durable record of what was investigated and why.</p>
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="persona">Scenario 3 — PM doing a launch readiness check before ring expansion</div>
+    <div class="narrative">
+      <p>Marcus is a PM about to expand a Copilot feature from canary to Tier 1. He wants a tenant-level engagement read over the last 14 days of canary, but the cadence scorecard runs at User Id. He opens the rollout, requests "Commercial Copilot Engagement" by Tenant Id over the 14-day window, validates, and gets the tenant view he needs before the expansion decision — no parallel ask to DS, no last-minute analyst pull, and the request is attached to the rollout for the reviewer to inspect.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 4 — Requirements                     -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 4</div>
+  <h2>Requirements</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:70px">Priority</th>
+        <th style="width:50px">ID</th>
+        <th>Requirement</th>
+        <th style="width:220px">Acceptance Criteria</th>
+        <th style="width:140px">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-01</td>
+        <td>One-off Scorecard CTA is visible inside the rollout panel of the Expedite experiment workspace</td>
+        <td>Button renders on every rollout panel where the user has request permissions; placement co-located with "View configuration"</td>
+        <td>Entry point lives where owners already are</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-02</td>
+        <td>Request drawer collects Assignment Unit, Scorecard, Start (date + 30-min time), End (date + 30-min time), all in UTC with the timezone label explicit</td>
+        <td>All four fields required; Validate disabled until populated; "timezone: GMT-0000 (UTC)" label always visible above the date rows</td>
+        <td>Drawer overlay preserves rollout context</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-03</td>
+        <td>Scorecard dropdown is constrained to the platform's curated catalog (Bizchat Core, Bizchat Indicator, Commercial Copilot Acquisition variants, Commercial Copilot Engagement variants, Windows Guardrails Consumer / Commercial, etc.)</td>
+        <td>List is read from the canonical catalog source; no free-text scorecard names accepted</td>
+        <td>Catalog ownership tracked in Q2</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-04</td>
+        <td>Assignment Unit is constrained to {User Id, Tenant Id, Device Id}</td>
+        <td>Dropdown values match this enum exactly; default behavior covered in R-10</td>
+        <td>Matches Expedite's existing unit taxonomy</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-05</td>
+        <td>Validate gate enforces (a) end &gt; start, (b) window length ≤ max allowed (TBD, default cap 90 days), (c) all required fields populated</td>
+        <td>Inline error messages per failed rule; submit blocked until clean</td>
+        <td>Window cap protects compute (R-13)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-06</td>
+        <td>Computed scorecard Name combines requester alias + scorecard type + request timestamp (e.g., "dalyds-Bizchat Indicator Scorecard 05/11/2026 02-30-15 PM")</td>
+        <td>Name renders live in the drawer as fields are populated; format is stable for downstream parsing; not editable in v1</td>
+        <td>Stable format enables downstream lookups</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-07</td>
+        <td>Submitted requests appear as a "Requested" row in the rollout's scorecard table immediately on Validate</td>
+        <td>Optimistic insert at the top of the table; row carries the same columns (Name, Period, Status) as cadence scorecards</td>
+        <td>Visibility prevents duplicate asks</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-08</td>
+        <td>On completion, the row's Status flips from "Requested" to "Completed" and the Scorecard Name becomes a link to the same scorecard surface as cadence scorecards</td>
+        <td>Status badge color/icon matches the existing cadence Completed badge; click opens the standard scorecard view in a new tab</td>
+        <td>One scorecard surface, two ways to land on it</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p0">P0</span></td>
+        <td>R-09</td>
+        <td>One-off requests reuse the existing scorecard catalog and compute pipeline — no new scorecard definitions, no parallel data path</td>
+        <td>Code review confirms one-off and cadence runs invoke the same compute job; output schemas are identical</td>
+        <td>Comparability with cadence is a core promise</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-10</td>
+        <td>Pre-fill the drawer's Assignment Unit from the rollout's primary assignment unit when known</td>
+        <td>When the rollout exposes a primary unit, drawer opens with it pre-selected; user can still change it</td>
+        <td>Reduces wrong-unit risk (Risk 2)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-11</td>
+        <td>Per-row hover or expand shows the exact UTC window the one-off scorecard was run over</td>
+        <td>Hover tooltip or expand caret shows start/end UTC datetimes; reviewers can tell which window produced which numbers</td>
+        <td>Auditability for completed rows</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-12</td>
+        <td>Duplicate action on any existing one-off row pre-fills the drawer with the same Scorecard + Assignment Unit (window left empty)</td>
+        <td>Action visible on Completed and Requested rows; opens drawer with the two fields populated and window blank</td>
+        <td>Speeds up incremental investigations</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p1">P1</span></td>
+        <td>R-13</td>
+        <td>Concurrent in-flight cap per requester per rollout (TBD, default 3)</td>
+        <td>Validate blocks submission with an inline message when cap reached; message names the cap and lists the existing in-flight requests so the requester can cancel or wait</td>
+        <td>Pipeline protection</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p2">P2</span></td>
+        <td>R-14</td>
+        <td>Multi-window batch submission — allow up to N (TBD, default 5) windows in a single submit that share Scorecard + Assignment Unit</td>
+        <td>Drawer supports add-window UI; each window appears as a separate row on submit</td>
+        <td>Post-v1 candidate</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p2">P2</span></td>
+        <td>R-15</td>
+        <td>Email or in-product notification when a Requested scorecard transitions to Completed</td>
+        <td>Notification fires once per request on Status transition; preference is per user</td>
+        <td>Post-v1 candidate</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-p2">P2</span></td>
+        <td>R-16</td>
+        <td>Auto-suggested time windows from rollout milestones (e.g., "Last 7 days of canary", "Since flight enabled")</td>
+        <td>Suggestions render as chips in the drawer; selecting a chip populates the window fields</td>
+        <td>Post-v1 candidate</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 5 — Design Direction                 -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 5</div>
+  <h2>Design Direction</h2>
+
+  <h3>UX Flow &amp; Reference</h3>
+  <div class="ux-flow">
+    Existing rollout panel in the Expedite experiment workspace — design system, fonts, and Fluent UI patterns to be retained.<br><br>
+    <strong>Rollout panel (top → bottom):</strong><br>
+    Collapsible header "Roll-out type" → Experiment link (with OCG / Control / Treatment flight IDs) → Primary actions row ("View configuration" + "<strong>Request One-off Scorecard</strong>") → Scorecard table (Name · Period · Status)<br><br>
+    <strong>Request drawer (opens on "Request One-off Scorecard"):</strong><br>
+    Header "Scorecard Options" → Assignment Unit dropdown → Scorecard dropdown → Analysis time range block (Start date + Start time, End date + End time, with explicit "timezone: GMT-0000 (UTC)" label and info tooltip) → Helper text "This will create one scorecard using the data within the time window provided" → Analysis Details (computed Name) → Footer: Validate button<br><br>
+    <small>See the live clickable prototype linked at the top of this spec.</small>
+  </div>
+
+  <h3>Key Interaction Notes</h3>
+  <ul>
+    <li><strong>Drawer overlay:</strong> the request drawer slides in over the rollout panel rather than navigating away — the requester keeps full context on which rollout they're acting against.</li>
+    <li><strong>Status badges:</strong> reuse the existing system in the scorecard table — green "Completed" (Checkmark icon) and blue "Requested" (Clock icon). New requests inherit "Requested" immediately on Validate.</li>
+    <li><strong>UTC everywhere:</strong> date and time pickers are in UTC; the timezone label is always visible — never inferred from the user's locale and never hidden behind a setting.</li>
+    <li><strong>30-minute interval times:</strong> the time dropdown uses 48 fixed 30-min slots for both Start and End, matching the platform's other scheduling controls.</li>
+    <li><strong>Computed Name:</strong> shown live in the drawer but not editable in v1 — keeps the downstream parsing format stable and prevents free-form naming sprawl.</li>
+  </ul>
+
+  <h3>Edge Cases &amp; Empty States</h3>
+  <ul>
+    <li><strong>No prior scorecards on the rollout:</strong> the table renders with column headers and an empty body; the One-off CTA still shows and is the primary path to populate it.</li>
+    <li><strong>Cap reached:</strong> Validate click surfaces a blocking inline message naming the cap and listing the requester's existing in-flight requests with submit timestamps so the user can cancel or wait.</li>
+    <li><strong>Window exceeds cap:</strong> inline error on the End field naming the cap and the actual window length; submit blocked.</li>
+    <li><strong>Compute pipeline unavailable:</strong> Validate succeeds optimistically; row inserts with "Requested" status; backend retries until success or timeout, at which point row flips to a third status "Failed" with a Retry action (P1 follow-up).</li>
+    <li><strong>Catalog scorecard renamed mid-flight:</strong> completed rows retain the historical name as displayed at request time; new requests use the current catalog name.</li>
+  </ul>
+
+  <h3>Accessibility</h3>
+  <ul>
+    <li>Drawer is keyboard-traversable; tab order matches visual flow: Assignment Unit → Scorecard → Start date → Start time → End date → End time → Validate.</li>
+    <li>All date and time pickers announce label, current value, and constraint state (e.g., "End date — required, must be after Start date").</li>
+    <li>Status badges convey state both visually (color + icon) and textually for screen readers — "Requested" and "Completed" are read aloud as the row gains focus.</li>
+    <li>Helper text and inline validation messages are programmatically associated with their fields so assistive tech announces them on focus and on error.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION 6 — Open Questions & Risks           -->
+<!-- ════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-number">Section 6</div>
+  <h2>Open Questions &amp; Risks</h2>
+
+  <h3>Open Questions</h3>
+  <div class="question-card">
+    <div class="q-title">Q1: What is the maximum allowable one-off window?</div>
+    <p>Compute cost grows with window size; longer windows are more useful for retrospectives. Need a defensible cap before launch. <strong>Owner:</strong> Compute Platform + PM.</p>
+  </div>
+  <div class="question-card">
+    <div class="q-title">Q2: Who curates the scorecard catalog and how do new scorecards enter it?</div>
+    <p>Today the selectable list is effectively hardcoded. Productizing a self-service surface requires a catalog source of truth, an owner, and an onboarding path for new scorecards. <strong>Owner:</strong> Data Science + PM.</p>
+  </div>
+  <div class="question-card">
+    <div class="q-title">Q3: What SLA do we publish for one-off completion, and what is the escalation path when missed?</div>
+    <p>Owners will plan around the SLA. Need a documented target (e.g., median ≤ 4h, p95 ≤ 24h) and a runbook for when the queue depth is degrading. <strong>Owner:</strong> Compute Platform.</p>
+  </div>
+  <div class="question-card">
+    <div class="q-title">Q4: What concurrency cap per requester per rollout protects the pipeline without blocking real work?</div>
+    <p>R-13 sets a default of 3 pending the data. Need a number grounded in pipeline capacity and observed request bursts. <strong>Owner:</strong> Compute Platform + PM.</p>
+  </div>
+  <div class="question-card">
+    <div class="q-title">Q5: Does surfacing Tenant Id and Device Id assignment options to self-service trigger any PII / privacy review?</div>
+    <p>Cadence runs use these units today, but moving them into a self-service drawer changes the access pattern. Confirm whether any additional gating or audit is required. <strong>Owner:</strong> PM + Privacy.</p>
+  </div>
+
+  <h3>Risks</h3>
+  <div class="risk-card">
+    <div class="risk-title">Risk 1: Self-service load spikes saturate the scorecard compute pipeline</div>
+    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> High. Easy self-service can flip a workflow that was rate-limited by ticket overhead into one that's only rate-limited by the user. <strong>Mitigation:</strong> per-requester concurrency cap (R-13); window-length cap (R-05); observability on the request queue with paging on depth threshold; ability to throttle the feature back to ticket-routed if needed.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 2: Owners pick the wrong Assignment Unit and act on misleading numbers</div>
+    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> High. A Device-Id run on a Tenant-Id-randomized experiment can produce coherent-looking but wrong results. <strong>Mitigation:</strong> pre-fill from the rollout's primary unit (R-10); inline help text on the field; per-completed-row tooltip showing the unit so reviewers can sanity-check before acting.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 3: Duplicate requests proliferate because owners can't see what's already in flight</div>
+    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> Medium. Multiple owners on the same rollout independently request the same scorecard/window. <strong>Mitigation:</strong> the rollout-level scorecard table is the dedup surface — Requested rows are visible to all owners; concurrency cap surfaces existing requests when triggered; P2 duplicate-aware Validate that warns on near-identical pending requests.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 4: One-off and cadence definitions drift if compute pipelines fork</div>
+    <p><strong>Likelihood:</strong> Low · <strong>Impact:</strong> High. If "one-off" gets its own compute path, the comparability promise breaks and reviewers lose trust in side-by-side reads. <strong>Mitigation:</strong> R-09 mandates a single pipeline; integration tests assert one-off vs. cadence parity on a canary scorecard; this is a launch-blocking invariant.</p>
+  </div>
+  <div class="risk-card">
+    <div class="risk-title">Risk 5: "Requested" rows accumulate stuck without status transition</div>
+    <p><strong>Likelihood:</strong> Medium · <strong>Impact:</strong> Medium. Failed backend runs leave the row in "Requested" indefinitely; users lose trust in the surface. <strong>Mitigation:</strong> visible age on Requested rows; auto-fail-and-retry policy on the backend; "Failed" status with Retry action as a P1 follow-up; quarterly audit of stuck rows.</p>
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<div class="footer">
+  One-off Scorecard · Product Specification · IDEAS Experimentation · Last updated May 2026
+</div>
+
+</body>
+</html>

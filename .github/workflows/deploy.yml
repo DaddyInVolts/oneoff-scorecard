@@ -31,11 +31,17 @@ jobs:
 
       - run: npm run build
 
+      - name: Assemble _site (spec at root + built prototype at /prototype/)
+        run: |
+          mkdir -p _site
+          cp spec.html _site/index.html
+          cp -r dist _site/prototype
+
       - uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: _site
 
       - uses: actions/deploy-pages@v4
         id: deployment
